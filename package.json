@@ -1,0 +1,26 @@
+{
+	"name": "asyncejs",
+	"version": "1.0.0",
+	"description": "Async embedded javascript templates with focus on performance",
+	"main": "lib",
+	"repository": "github:mpt0/node-asyncejs",
+	"author": "Max J. Polster",
+	"license": "MIT",
+	"scripts": {
+		"test": "xo && nyc ava",
+		"dev": "ava --verbose --watch"
+	},
+	"devDependencies": {
+		"ava": "^0.24.0",
+		"xo": "^0.18.2"
+	},
+	"dependencies": {
+		"escape-html": "^1.0.3",
+		"js-string-escape": "^1.0.1"
+	},
+	"xo": {
+		"rules": {
+			"no-eval": 0
+		}
+	}
+}
