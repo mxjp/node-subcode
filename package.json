@@ -1,6 +1,6 @@
 {
 	"name": "asyncejs",
-	"version": "1.0.0",
+	"version": "0.0.1",
 	"description": "Async embedded javascript templates with focus on performance",
 	"main": "lib",
 	"repository": "github:mpt0/node-asyncejs",
