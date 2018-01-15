@@ -1,12 +1,12 @@
-# asyncejs
-[![Travis](https://img.shields.io/travis/mpt0/node-asyncejs.svg)]()
-[![npm](https://img.shields.io/npm/v/asyncejs.svg)]()
-[![npm](https://img.shields.io/npm/l/asyncejs.svg)]()
+# sub-js
+[![Travis](https://img.shields.io/travis/mpt0/node-sub-js.svg)]()
+[![npm](https://img.shields.io/npm/v/sub-js.svg)]()
+[![npm](https://img.shields.io/npm/l/sub-js.svg)]()
 
 Async embedded javascript templates with focus on performance
 
 ## Status
-Asyncejs is still under development. Stay tuned ;)
+sub-js is still under development. Stay tuned ;)
 
 <br/>
 
@@ -45,7 +45,7 @@ Remember that the syntax configuration is not validated and that a wrong syntax 
 # Parse
 The parse function can be used to implement custom template rendering.
 ```js
-const {parse} = require('asyncejs');
+const {parse} = require('sub-js');
 
 parse(src, output, syntax);
 ```
@@ -85,7 +85,7 @@ plain('!');
 # Compile
 The compile function is a simple layer on top of parsing a template which turns a template into a cached function which returns the output html.
 ```js
-const {compile} = require('asyncejs');
+const {compile} = require('sub-js');
 
 const greeter = compile(src, options);
 ```
@@ -122,7 +122,7 @@ await greeter({
 # Render
 The render function is a shortcut for compiling a template and rendering it immediately.
 ```js
-const {render} = require('asyncejs');
+const {render} = require('sub-js');
 
 render(src, locals, options);
 
