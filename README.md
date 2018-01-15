@@ -1,4 +1,8 @@
 # asyncejs
+[![Travis](https://img.shields.io/travis/mpt0/node-asyncejs.svg)]()
+[![npm](https://img.shields.io/npm/v/asyncejs.svg)]()
+[![npm](https://img.shields.io/npm/l/asyncejs.svg)]()
+
 Async embedded javascript templates with focus on performance
 
 ## Status
