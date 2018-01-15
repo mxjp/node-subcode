@@ -87,7 +87,7 @@ The compile function is a simple layer on top of parsing a template which turns 
 ```js
 const {compile} = require('subcode');
 
-const greeter = compile(src, options);
+compile(src, options); // -> render(locals)
 ```
 + src `<string>` - The template to render.
 + options `<object>` - An object with the following compile options:
@@ -102,7 +102,9 @@ const greeter = compile(src, options);
 ## Context &amp; locals
 If `useWith` is true the context &amp; locals are provided using `with`. When using with, locals will override context variables. Otherwise both objects are available using the `context` &amp; `locals` variable directly.
 ```js
-compile('Hello {{= locals.name }}!', {useWith: false});
+const greeter = compile('Hello {{= locals.name }}!', {useWith: false});
+
+greeter({name: 'Developer'}); // -> Hello Developer!
 ```
 
 ## Async templates
@@ -112,7 +114,7 @@ const greeter = compile('Hello {{= await name }}!');
 
 await greeter({
 	name: Promise.resolve('Developer')
-});
+}); // -> Hello Developer!
 ```
 
 <br/>
