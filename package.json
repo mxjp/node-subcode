@@ -1,9 +1,9 @@
 {
-	"name": "asyncejs",
+	"name": "subcode",
 	"version": "0.0.1",
 	"description": "Async embedded javascript templates with focus on performance",
 	"main": "lib",
-	"repository": "github:mpt0/node-asyncejs",
+	"repository": "github:mpt0/node-subcode",
 	"author": "Max J. Polster",
 	"license": "MIT",
 	"scripts": {

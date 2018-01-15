@@ -1,12 +1,12 @@
-# sub-js
-[![Travis](https://img.shields.io/travis/mpt0/node-sub-js.svg)]()
-[![npm](https://img.shields.io/npm/v/sub-js.svg)]()
-[![npm](https://img.shields.io/npm/l/sub-js.svg)]()
+# subcode
+[![Travis](https://img.shields.io/travis/mpt0/node-subcode.svg)]()
+[![npm](https://img.shields.io/npm/v/subcode.svg)]()
+[![npm](https://img.shields.io/npm/l/subcode.svg)]()
 
 Async embedded javascript templates with focus on performance
 
 ## Status
-sub-js is still under development. Stay tuned ;)
+subcode is still under development. Stay tuned ;)
 
 <br/>
 
@@ -45,7 +45,7 @@ Remember that the syntax configuration is not validated and that a wrong syntax 
 # Parse
 The parse function can be used to implement custom template rendering.
 ```js
-const {parse} = require('sub-js');
+const {parse} = require('subcode');
 
 parse(src, output, syntax);
 ```
@@ -85,7 +85,7 @@ plain('!');
 # Compile
 The compile function is a simple layer on top of parsing a template which turns a template into a cached function which returns the output html.
 ```js
-const {compile} = require('sub-js');
+const {compile} = require('subcode');
 
 const greeter = compile(src, options);
 ```
@@ -122,7 +122,7 @@ await greeter({
 # Render
 The render function is a shortcut for compiling a template and rendering it immediately.
 ```js
-const {render} = require('sub-js');
+const {render} = require('subcode');
 
 render(src, locals, options);
 
