@@ -7,7 +7,7 @@
 	"author": "Max J. Polster",
 	"license": "MIT",
 	"scripts": {
-		"test": "xo && nyc ava",
+		"test": "xo && ava",
 		"dev": "ava --verbose --watch"
 	},
 	"devDependencies": {
