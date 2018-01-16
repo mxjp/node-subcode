@@ -12,6 +12,21 @@ subcode is still under development. Stay tuned ;)
 
 
 
+# Quick Start
+```bash
+npm install subcode
+```
+
+```js
+const {render} = require('subcode');
+
+const html = await render('Hello {{= target }}!', {target: 'World'});
+// -> Hello World!
+```
+<br/>
+
+
+
 # Syntax
 | Syntax | Description |
 |-|-|
