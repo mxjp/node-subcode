@@ -28,3 +28,13 @@ test('no with', async t => {
 	const fn2 = await compile('{{= locals.test }}', {useWith: false});
 	t.is(fn2({test: 'value'}), 'value');
 });
+
+test('custom syntax', async t => {
+	const fn = await compile('<%= test %>', {
+		syntax: {
+			open: '<%',
+			close: '%>'
+		}
+	});
+	t.is(fn({test: 'value'}), 'value');
+});

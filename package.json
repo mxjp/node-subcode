@@ -1,7 +1,7 @@
 {
 	"name": "subcode",
-	"version": "0.0.3",
-	"description": "Async embedded javascript templates with focus on performance",
+	"version": "0.1.0",
+	"description": "Async embedded javascript templates with focus on performance and flexibility",
 	"main": "lib",
 	"repository": "github:mpt0/node-subcode",
 	"author": "Max J. Polster",
