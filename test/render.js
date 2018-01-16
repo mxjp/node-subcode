@@ -33,3 +33,10 @@ test('no with', t => {
 	});
 	t.is(render('{{= locals.v }}', {v: 'a'}, {useWith: false}), 'a');
 });
+
+test('no control code', t => {
+	const err = t.throws(() => {
+		render('{{: }}');
+	});
+	t.true(err.message.startsWith('Compiler control code is not yet supported'));
+});
