@@ -1,42 +1,17 @@
 'use strict';
 
+const path = require('path');
 const test = require('ava');
 const {render} = require('..');
 
-test('simple', t => {
-	t.is(render('a{{= v }}c', {v: 'b'}), 'abc');
+test('simple', async t => {
+	t.is(await render('Hello {{= name }}!', {name: 'Developer'}), 'Hello Developer!');
 });
 
-test('escaped', t => {
-	t.is(render('{{= v }}', {v: '&'}), '&amp;');
+test('file', async t => {
+	t.is((await render.file(path.join(__dirname, 'parent.html'))).trim(), 'b');
 });
 
-test('unescaped', t => {
-	t.is(render('{{- v }}', {v: '&'}), '&');
-});
-
-test('control', t => {
-	render('{{ t.pass(); }}', {t});
-});
-
-test('context', t => {
-	render('{{ t.pass(); }}', {}, {context: {t}});
-});
-
-test('async execution', async t => {
-	t.is(await render('{{= await v }}', {v: 'a'}, {async: true}), 'a');
-});
-
-test('no with', t => {
-	t.throws(() => {
-		t.is(render('{{= v }}', {v: 'a'}, {useWith: false}), 'a');
-	});
-	t.is(render('{{= locals.v }}', {v: 'a'}, {useWith: false}), 'a');
-});
-
-test('no control code', t => {
-	const err = t.throws(() => {
-		render('{{: }}');
-	});
-	t.true(err.message.startsWith('Compiler control code is not yet supported'));
+test('async', async t => {
+	t.is(await render('{{= await test }}', {test: 'value'}, {async: true}), 'value');
 });

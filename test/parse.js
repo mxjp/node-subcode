@@ -23,7 +23,7 @@ function createOutput() {
 	};
 }
 
-test('parse control', t => {
+test('compiler control', t => {
 	const {output, handler} = createOutput();
 	parse('a{{: b }}c', handler);
 	t.deepEqual(output, [[PLAIN, 'a'], [C_CONTROL, ' b '], [PLAIN, 'c']]);
@@ -134,18 +134,4 @@ test('mixed with custom syntax', t => {
 		[CONTROL, ' e '],
 		[C_CONTROL, ' f ']
 	]);
-});
-
-test('parser api errors', t => {
-	parse('\n {{: }}', {
-		plain() {},
-		compilerControl(value, {error}) {
-			t.is(value, ' ');
-			const err = t.throws(() => {
-				error('test');
-			});
-			t.true(err.message.startsWith('test'));
-			t.is(err.pos.line, 1);
-		}
-	});
 });

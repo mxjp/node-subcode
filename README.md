@@ -58,19 +58,19 @@ parse(src, output, syntax);
 ## Parser output
 ```js
 const output = {
-	plain: (html, api) => {
+	plain(html) {
 		// TODO: Called with plain html.
 	},
-	compilerControl: (js, api) => {
+	compilerControl(js) {
 		// TODO: Called with js-code that should be interpreted at compile time if supported.
 	},
-	writeEscaped: (js, api) => {
+	writeEscaped(js) {
 		// TODO: Called with js-code, which outputs escaped.
 	},
-	writeUnescaped: (js, api) => {
+	writeUnescaped(js) {
 		// TODO: Called with js-code, which outputs unescaped.
 	},
-	control: (js, api) => {
+	control(js) {
 		// TODO: Called with js-code that is not used as output.
 	}
 };
@@ -81,66 +81,4 @@ Parsing the template `Hello {{= name }}!` will result in the following function 
 plain('Hello ', api);
 writeEscaped(' name ', api);
 plain('!', api);
-```
-
-## Parser api
-The object passed to output functions provides the following api:
-
-#### error(..)
-The error function throws an error that contains information on the current parser state and the position.
-```js
-api.error(message, causeIndex = pos);
-```
-
-<br/>
-
-
-
-# Compile
-The compile function is a simple layer on top of parsing a template which turns a template into a cached function which returns the output html.
-```js
-const {compile} = require('subcode');
-
-compile(src, options); // -> render(locals)
-```
-+ src `<string>` - The template to render.
-+ options `<object>` - An object with the following compile options:
-	+ useWith `<boolean>` - True to use `with` for providing `locals` and the `context` object. Default is `true`.
-	+ async `<boolean>` - True to compile the template to an async function. This enables using `await` from template code. Default is `false`.
-	+ context `<object>` - An object with variables that can be used from template code.
-	+ syntax `<object>` - A syntax configuration object as described above.
-+ returns `<function>` - A function to render the template which takes the following arguments:
-	+ locals `<object>` - An object with variables that can be used from template code.
-	+ returns `<string>` - The rendered string.
-
-## Context &amp; locals
-If `useWith` is true the context &amp; locals are provided using `with`. When using with, locals will override context variables. Otherwise both objects are available using the `context` &amp; `locals` variable directly.
-```js
-const greeter = compile('Hello {{= locals.name }}!', {useWith: false});
-
-greeter({name: 'Developer'}); // -> Hello Developer!
-```
-
-## Async templates
-If `async` is true, the compiled function will be async.
-```js
-const greeter = compile('Hello {{= await name }}!');
-
-await greeter({
-	name: Promise.resolve('Developer')
-}); // -> Hello Developer!
-```
-
-<br/>
-
-
-
-# Render
-The render function is a shortcut for compiling a template and rendering it immediately.
-```js
-const {render} = require('subcode');
-
-render(src, locals, options);
-
-render('Hello {{= name }}!', {name: 'Developer'}); // -> Hello Developer!
 ```
