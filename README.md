@@ -18,8 +18,9 @@ subcode is still under development. Stay tuned ;)
 | `Hello {{= name }}!` | Output html escaped |
 | `Hello {{- name }}!` | Output unescaped |
 | `{{ if (some item) { }}` | Control code |
-| `{{# ... }}` | Comment
-| `{{{` | Output an unescaped `{{`
+| `{{# ... }}` | Comment |
+| `{{{` | Output an unescaped `{{` |
+| `{{: code }}` | Compiler control code |
 
 ## Syntax configuration
 The default syntax from the table above would have the following configuration object:
@@ -33,7 +34,8 @@ const syntax = {
 	writeEscaped: '=',
 	writeUnescaped: '-',
 	comment: '#',
-	escape: open[open.length - 1]
+	escape: open[open.length - 1],
+	compilerControl: ':'
 };
 ```
 Remember that the syntax configuration is not validated and that a wrong syntax can lead to strange errors.
@@ -56,16 +58,19 @@ parse(src, output, syntax);
 ## Parser output
 ```js
 const output = {
-	plain: html => {
+	plain: (html, api) => {
 		// TODO: Called with plain html.
 	},
-	writeEscaped: js => {
+	compilerControl: (js, api) => {
+		// TODO: Called with js-code that should be interpreted at compile time if supported.
+	},
+	writeEscaped: (js, api) => {
 		// TODO: Called with js-code, which outputs escaped.
 	},
-	writeUnescaped: js => {
+	writeUnescaped: (js, api) => {
 		// TODO: Called with js-code, which outputs unescaped.
 	},
-	control: js => {
+	control: (js, api) => {
 		// TODO: Called with js-code that is not used as output.
 	}
 };
@@ -73,9 +78,18 @@ const output = {
 All output functions from the output object are called while parsing the template.
 Parsing the template `Hello {{= name }}!` will result in the following function calls:
 ```js
-plain('Hello ');
-writeEscaped(' name ');
-plain('!');
+plain('Hello ', api);
+writeEscaped(' name ', api);
+plain('!', api);
+```
+
+## Parser api
+The object passed to output functions provides the following api:
+
+#### error(..)
+The error function throws an error that contains information on the current parser state and the position.
+```js
+api.error(message, causeIndex = pos);
 ```
 
 <br/>
