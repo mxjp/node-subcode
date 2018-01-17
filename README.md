@@ -18,11 +18,11 @@ npm install subcode
 # Syntax
 | Syntax | Function |
 |-|-|
-| `{{= some code }}` | Output escaped |
+| `{{= some code }}` | Output html escaped |
 | `{{- some code }}` | Output unescaped |
 | `{{ some code }}` | Runtime control code |
 | `{{: some code }}` | Async code that is executed at compile time. `await` can be used. |
-| `{{{` | Outputs `{{`
+| `{{{` | Outputs `{{` |
 
 <br/>
 
