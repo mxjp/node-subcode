@@ -147,6 +147,7 @@ const template = await compile(src, options);
 	+ context `<object>` - Properties of this object are available from compile time control code. Default is `{}`
 	+ filename `<string>` - The filename used for relative includes.
 	+ encoding `<string>` - The encoding used for reading files. Default is `'utf8'`
+	+ cache `<object>` - An object for caching compiled templates as described below. Default is none.
 + returns `<function>` - The compiled template function which takes the `locals` argument:
 	+ locals `<object>` - Properties of this object are available from runtime output and control code. Default is `{}`
 	+ returns `<string>` - The rendered output.
@@ -161,6 +162,20 @@ const template = await compile.file(filename, options);
 + filename `<string>` - The file to load and compile.
 + options - The same options object passed to the `compile` function.
 	+ The `filename` option will be set to the current filename automatically.
+
+<br/>
+
+
+
+## Caching compiled templates
+The cache object must implement the following api:
+
+| Function | Description |
+|-|-|
+| `set(filename, value)` | Set a cache entry |
+| `get(filename)` | Get a cache entry. Should return `undefined` if no entry exists. |
+
+You can also use a `Map` instance as cache.
 
 <br/>
 
