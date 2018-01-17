@@ -166,6 +166,31 @@ const template = await compile.file(filename, options);
 
 
 
+## Async templates
+Async templates enable the use of `await` from runtime control code.
+```js
+const template = await compile('{{= await value }}', {async: true});
+
+await template({
+	value: Promise.resolve(42)
+}); // -> 42
+```
+
+When including templates or defining inline templates, dont forget to set the `async` option to true, if you want the embedded template function to be async too!
+```html
+{{: include('') }}
+```
+
+#### Using async templates
+When using async templates from runtime code, dont forget to use await:
+```html
+{{- await myAsyncTemplate({some: 'locals'}) }}
+```
+
+<br/>
+
+
+
 ## Custom syntax
 The `syntax` option can be used to change the actual template syntax.<br/>
 The configuration object for the default syntax would look like this:
