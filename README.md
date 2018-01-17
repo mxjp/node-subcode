@@ -195,6 +195,36 @@ Custom syntax is not validated and invalid configuration may cause strange error
 
 
 
+# parse
+Gives access to subcodes internal parser.
+```js
+const {parse} = require('subcode');
+
+parse(src, output, syntax);
+```
++ src `<string>` - The source to parse.
++ output `<object>` - An object that should implement the following api:
+	+ plain(html) `<function>` - Called for each raw html part.
+	+ compilerControl(code) `<function>` - Called for compiler control code.
+	+ writeEscaped(code) `<function>` - Called for escaped output code.
+	+ writeUnescaped(code) `<function>` - Called for unescaped output code.
+	+ control(code) `<function>` - Called for control code.
++ syntax `<object>` - An optional syntax configuration.
+
+When parsing a template, the output functions are called synchronously.<br/>
+
+### Example
+The following table shows some example templates with the resulting function calls that are made from the parser:
+
+| Template | Resulting function calls |
+|-|-|
+| `Hello {{= name }}!` | `plain('Hello '), writeEscaped(' name '), plain('!')` |
+| `{{: some control code }}` | `control(' some control code ')` |
+
+<br/>
+
+
+
 ---
 
 # Development
