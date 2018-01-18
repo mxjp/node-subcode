@@ -59,6 +59,21 @@ compile.file('numbers.html').then(numbers => {
 
 
 
+## Accessing locals
+If locals are accessed directly, an error is throws if the variable does not exist.
+```html
+<h1><?= title ?></h1>
+```
+
+If the `locals` object is used and the variable does not exist no error is thrown and the value will be `undefined`.
+```html
+<h1><?= locals.title ?></h1>
+```
+
+<br/>
+
+
+
 ## Compile time includes
 Include another template file at compile time. The following will embed the template as a function with the specified name:
 ```html
