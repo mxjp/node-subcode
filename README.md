@@ -18,11 +18,11 @@ npm install subcode
 # Syntax
 | Syntax | Function |
 |-|-|
-| `{{= some code }}` | Output html escaped |
-| `{{- some code }}` | Output unescaped |
-| `{{ some code }}` | Runtime control code |
-| `{{: some code }}` | Async code that is executed at compile time. `await` can be used. |
-| `{{{` | Outputs `{{` |
+| `<?= some code ?>` | Output html escaped |
+| `<?- some code ?>` | Output unescaped |
+| `<? some code ?>` | Runtime control code |
+| `<?: some code ?>` | Async code that is executed at compile time. `await` can be used. |
+| `<??` | Outputs `<?` |
 
 <br/>
 
@@ -31,7 +31,7 @@ npm install subcode
 ## Compile time includes
 Include another template file at compile time. The following will embed the template as a function with the specified name:
 ```html
-{{: await include(name, filename, options) }}
+<?: await include(name, filename, options) ?>
 ```
 + name `<string>` - The name of the embedded function.
 + filename `<string>` - The filename of the template to include. The `filename` option is required when using a relative path.
@@ -40,7 +40,7 @@ Include another template file at compile time. The following will embed the temp
 #### Using included templates
 Included templates can be rendered at runtime:
 ```html
-{{- name(locals) }}
+<?- name(locals) ?>
 ```
 + name `<string>` - The name of the template function.
 + locals `<object>` - Locals for rendering the included template.
@@ -50,13 +50,13 @@ Included templates can be rendered at runtime:
 #### Example
 _my-template.html_
 ```html
-<p>Some {{= some }}</p>
+<p>Some <?= some ?></p>
 ```
 _Main template_
 ```html
-{{: await include ('myTemplate', 'my-template.html') }}
-{{- myTemplate({some: 'locals'}) }}
-{{- myTemplate({some: 'trees'}) }}
+<?: await include ('myTemplate', 'my-template.html') ?>
+<?- myTemplate({some: 'locals'}) ?>
+<?- myTemplate({some: 'trees'}) ?>
 ```
 **Outputs**
 ```html
@@ -71,9 +71,9 @@ _Main template_
 ## Inline templates
 Inline template functions can be defined to reuse them elsewhere.
 ```html
-{{: template(name, options, () => { }}
+<?: template(name, options, () => { ?>
 	<!-- Template body -->
-{{: }) }}
+<?: }) ?>
 ```
 + name `<string>` - The name of the template function.
 + options `<object>` - An optional object which may set the `async` compiler option.
@@ -84,12 +84,12 @@ Inline templates are used in the same way as included templates.
 
 #### Example
 ```html
-{{: template('myTemplate', () => { }}
-	<h1>{{= title }}</h1>
-	<p>{{= text }}</p>
-{{: }) }}
+<?: template('myTemplate', () => { ?>
+	<h1><?= title ?></h1>
+	<p><?= text ?></p>
+<?: }) ?>
 
-{{- myTemplate({title: 'My title!', text: 'Some text...'}) }}
+<?- myTemplate({title: 'My title!', text: 'Some text...'}) ?>
 ```
 **Outputs**
 ```html
@@ -104,14 +104,14 @@ Inline templates are used in the same way as included templates.
 ## Emitting control code
 Control code can be emitted from compile time code for embedding custom runtime api or resources.
 ```html
-{{: write(code) }}
+<?: write(code) ?>
 ```
 + code `<string>` - The runtime control code to emit.
 
 #### Example
 ```html
-{{: write('const example = 42;') }}
-<p>{{= example }}</p>
+<?: write('const example = 42;') ?>
+<p><?= example ?></p>
 ```
 **Outputs**
 ```html
@@ -184,7 +184,7 @@ You can also use a `Map` instance as cache.
 ## Async templates
 Async templates enable the use of `await` from runtime control code.
 ```js
-const template = await compile('{{= await value }}', {async: true});
+const template = await compile('<?= await value ?>', {async: true});
 
 await template({
 	value: Promise.resolve(42)
@@ -193,13 +193,13 @@ await template({
 
 When including templates or defining inline templates, dont forget to set the `async` option to true, if you want the embedded template function to be async too!
 ```html
-{{: include('') }}
+<?: include('') ?>
 ```
 
 #### Using async templates
 When using async templates from runtime code, dont forget to use await:
 ```html
-{{- await myAsyncTemplate({some: 'locals'}) }}
+<?- await myAsyncTemplate({some: 'locals'}) ?>
 ```
 
 <br/>
@@ -212,8 +212,8 @@ The configuration object for the default syntax would look like this:
 ```js
 {
 	// Variable length:
-	open: '{{',
-	close: '}}',
+	open: '<?',
+	close: '?>',
 
 	// Fixed length:
 	compilerControl: ':',
@@ -258,8 +258,8 @@ The following table shows some example templates with the resulting function cal
 
 | Template | Resulting function calls |
 |-|-|
-| `Hello {{= name }}!` | `plain('Hello '), writeEscaped(' name '), plain('!')` |
-| `{{: some control code }}` | `control(' some control code ')` |
+| `Hello <?= name ?>!` | `plain('Hello '), writeEscaped(' name '), plain('!')` |
+| `<?: some control code ?>` | `control(' some control code ')` |
 
 <br/>
 

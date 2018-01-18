@@ -25,92 +25,92 @@ function createOutput() {
 
 test('compiler control', t => {
 	const {output, handler} = createOutput();
-	parse('a{{: b }}c', handler);
+	parse('a<?: b ?>c', handler);
 	t.deepEqual(output, [[PLAIN, 'a'], [C_CONTROL, ' b '], [PLAIN, 'c']]);
 });
 
 test('write escaped', t => {
 	const {output, handler} = createOutput();
-	parse('a{{= b }}c', handler);
+	parse('a<?= b ?>c', handler);
 	t.deepEqual(output, [[PLAIN, 'a'], [W_ESCAPED, ' b '], [PLAIN, 'c']]);
 });
 
 test('write unescaped', t => {
 	const {output, handler} = createOutput();
-	parse('a{{- b }}c', handler);
+	parse('a<?- b ?>c', handler);
 	t.deepEqual(output, [[PLAIN, 'a'], [W_UNESCAPED, ' b '], [PLAIN, 'c']]);
 });
 
 test('control', t => {
 	const {output, handler} = createOutput();
-	parse('a{{ b }}c', handler);
+	parse('a<? b ?>c', handler);
 	t.deepEqual(output, [[PLAIN, 'a'], [CONTROL, ' b '], [PLAIN, 'c']]);
 });
 
 test('comment', t => {
 	const {output, handler} = createOutput();
-	parse('a{{# b }}c', handler);
+	parse('a<?# b ?>c', handler);
 	t.deepEqual(output, [[PLAIN, 'a'], [PLAIN, 'c']]);
 });
 
 test('close tag in literals', t => {
 	const {output, handler} = createOutput();
-	parse('a{{ \'}}\' }}{{ "}}" }}{{ `}}` }}c', handler);
+	parse('a<? \'?>\' ?><? "?>" ?><? `?>` ?>c', handler);
 	t.deepEqual(output, [
 		[PLAIN, 'a'],
-		[CONTROL, ' \'}}\' '],
-		[CONTROL, ' "}}" '],
-		[CONTROL, ' `}}` '],
+		[CONTROL, ' \'?>\' '],
+		[CONTROL, ' "?>" '],
+		[CONTROL, ' `?>` '],
 		[PLAIN, 'c']
 	]);
 });
 
 test('close tag in multi-line comments', t => {
 	const {output, handler} = createOutput();
-	parse('a{{ /*}}*/ }}c', handler);
+	parse('a<? /*?>*/ ?>c', handler);
 	t.deepEqual(output, [
-		[PLAIN, 'a'], [CONTROL, ' /*}}*/ '], [PLAIN, 'c']
+		[PLAIN, 'a'], [CONTROL, ' /*?>*/ '], [PLAIN, 'c']
 	]);
 });
 
 test('close tag in single-line comments', t => {
 	const {output, handler} = createOutput();
-	parse('a{{ //}}\n }}c', handler);
+	parse('a<? //?>\n ?>c', handler);
 	t.deepEqual(output, [
-		[PLAIN, 'a'], [CONTROL, ' //}}\n '], [PLAIN, 'c']
+		[PLAIN, 'a'], [CONTROL, ' //?>\n '], [PLAIN, 'c']
 	]);
 });
 
 test('escape open tag', t => {
 	const {output, handler} = createOutput();
-	parse('a{{{b', handler);
+	parse('a<??b', handler);
 	t.deepEqual(output, [
 		[PLAIN, 'a'],
-		[PLAIN, '{{'],
+		[PLAIN, '<?'],
 		[PLAIN, 'b']
 	]);
 });
 
 test('custom escape open tag', t => {
 	const {output, handler} = createOutput();
-	parse('a{{?b', handler, {
-		escape: '?'
+	parse('a<?!b', handler, {
+		escape: '!'
 	});
 	t.deepEqual(output, [
 		[PLAIN, 'a'],
-		[PLAIN, '{{'],
+		[PLAIN, '<?'],
 		[PLAIN, 'b']
 	]);
 });
 
 test('mixed', t => {
 	const {output, handler} = createOutput();
-	parse('a{{= b }}{{- c }}{{{{{# d }}{{ e }}{{: f }}', handler);
+	parse('a<?= b ?><?- c ?><??<?# d ?><? e ?><?: f ?>', handler);
 	t.deepEqual(output, [
 		[PLAIN, 'a'],
 		[W_ESCAPED, ' b '],
 		[W_UNESCAPED, ' c '],
-		[PLAIN, '{{'],
+		[PLAIN, '<?'],
 		[CONTROL, ' e '],
 		[C_CONTROL, ' f ']
 	]);
