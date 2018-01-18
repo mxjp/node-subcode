@@ -13,6 +13,37 @@ Subcode is still under development. Stay tuned ;)
 npm install subcode
 ```
 
+# Quick Start
+_numbers.html_
+```html
+<ul>
+	<? for (const number of numbers) { ?>
+	<li><?= number ?></li>
+	<? } ?>
+</ul>
+```
+
+_index.js_
+```js
+const {compile} = require('subcode');
+
+compile.file('numbers.html').then(numbers => {
+	console.log(numbers({
+		numbers: [1, 7, 42]
+	}));
+});
+```
+**Outputs**
+```html
+<ul>
+	<li>1</li>
+	<li>7</li>
+	<li>42</li>
+</ul>
+```
+
+
+
 <br/>
 
 # Syntax
