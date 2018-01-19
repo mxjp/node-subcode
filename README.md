@@ -6,7 +6,7 @@
 A bootstrapped javascript template engine that features compile and runtime control code, custom syntax, compile-time includes, async templates and the use of it's internal parser.
 
 ## Status
-Subcode is still under development. Stay tuned ;)
+Subcode is still under development. Syntax, api and usage may change in the future.
 
 # Installation
 ```bash
