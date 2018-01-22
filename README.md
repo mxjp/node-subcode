@@ -6,7 +6,14 @@
 A bootstrapped javascript template engine that features compile and runtime control code, custom syntax, compile-time includes, async templates and the use of it's internal parser.
 
 ## Status
-Subcode is still under development. Syntax, api and usage may change in the future.
+Subcode is still under development. Syntax, api and usage may change in the future. Anything that is marked as deprecated may stop working at any time!
+
+#### Recently deprecated API
++ compile options/context - Deprecated because it does not fit all the needs when extending the compile time context with custom api from outside a template.
+
+<br/>
+
+
 
 # Installation
 ```bash
@@ -218,7 +225,7 @@ const template = await compile(src, options);
 + options `<object>` - An optional object with the following properties:
 	+ async `<boolean>` - True to compile the template to an async function. Default is `false`
 	+ syntax `<object>` - A custom syntax configuration as described below.
-	+ context `<object>` - Properties of this object are available from compile time control code. Default is `{}`
+	+ **DEPRECATED:** _context `<object>` - Properties of this object are available from compile time control code. Default is `{}`_
 	+ filename `<string>` - The filename used for relative includes.
 	+ encoding `<string>` - The encoding used for reading files. Default is `'utf8'`
 	+ cache `<object>` - An object for caching compiled templates as described below. Default is none.
