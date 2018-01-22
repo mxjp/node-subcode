@@ -9,7 +9,7 @@ A bootstrapped javascript template engine that features compile and runtime cont
 Subcode is still under development. Syntax, api and usage may change in the future. Anything that is marked as deprecated may stop working at any time!
 
 #### Recently deprecated API
-+ compile options/context - Deprecated because it does not fit all the needs when extending the compile time context with custom api from outside a template.
++ compile options/context - Deprecated because it does not fit all the needs when extending the compile time context with custom api from outside a template. _Using this option will now print a warning._
 
 <br/>
 
