@@ -154,6 +154,12 @@ Control code can be emitted from compile time code for embedding custom runtime 
 ```
 + code `<string>` - The runtime control code to emit.
 
+#### Escaping string literals
+To escape the content of a string literal use the `stringEscape` function which is also available from the compile time context.
+```html
+<?: write('const someString = "' + stringEscape('Some string...') + '"'); ?>
+```
+
 #### Example
 ```html
 <?: write('const example = 42;') ?>
@@ -162,6 +168,28 @@ Control code can be emitted from compile time code for embedding custom runtime 
 **Outputs**
 ```html
 <p>42</p>
+```
+
+<br/>
+
+
+
+## Accessing the module system
+```html
+<?:
+	filename // The current filename if the filename option was set.
+	dirname // The current dirname if the filename options was set.
+?>
+<?:
+	require(request);
+	// The require function.
+	// Relative paths are supported if the filename options ise set.
+?>
+```
+#### Example
+```html
+<?: write(`const filename="' + stringEscape(filename) + '";'); ?>
+The filename of this template was "<?= filename ?>".
 ```
 
 <br/>

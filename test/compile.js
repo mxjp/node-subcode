@@ -42,6 +42,26 @@ test('emit control code', async t => {
 	t.is(tm(), '42');
 });
 
+test('emit control code with escaped literals', async t => {
+	const tm = await compile('<?: write("const value = \'" + stringEscape("a\'b") + "\';"); ?><?- value ?>');
+	t.is(tm(), 'a\'b');
+});
+
+test('filename', async t => {
+	const tm = await compile('<?: write("const value = \'" + stringEscape(filename) + "\';"); ?><?- value ?>', {filename: 'a/b.html'});
+	t.is(tm(), 'a/b.html');
+});
+
+test('dirname', async t => {
+	const tm = await compile('<?: write("const value = \'" + stringEscape(dirname) + "\';"); ?><?- value ?>', {filename: 'a/b.html'});
+	t.is(tm(), 'a');
+});
+
+test('require', async t => {
+	const tm = await compile('<?: write("const value = \'" + stringEscape(require("./data/test.json")) + "\';"); ?><?- value ?>', {filename: path.join(__dirname, 'test.html')});
+	t.is(tm(), 'test value');
+});
+
 test('async templates', async t => {
 	const tm = await compile('<?= await value ?>', {async: true});
 	t.is(await tm({value: Promise.resolve(42)}), '42');
