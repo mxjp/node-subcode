@@ -219,7 +219,7 @@ syntax: {
 	escape: open[open.length - 1]
 }
 ```
-Note that a custom syntax configuration is not validated. Syntax configuration is not checked for errors. To ensure that everything is correct, the following guidelines should be followed:
+Note that a custom syntax configuration is not validated. To ensure that everything will work as expected, the following guidelines should be followed:
 + All options have a different value.
 + Variable length options have a length of at least 1.
 + Fixed length options have a length of 1.
@@ -237,6 +237,8 @@ In async templates you can use `await`:
 ```html
 <?= await getValue() ?>
 ```
+
+> Note that included or embedded templates will **not** be async. You have to set the `async` option for each included or embedded template manually if you want them to be async too!
 
 <br/>
 
