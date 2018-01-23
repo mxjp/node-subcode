@@ -17,6 +17,7 @@ A bootstrapped javascript template engine that features compile and runtime cont
 	+ [Caching compiled templates](#caching-compiled-templates)
 	+ [Custom syntax](#custom-syntax)
 	+ [Async templates](#async-templates)
+	+ [Compile template modules](#compile-template-modules)
 + [Parser API](#parser-api)
 + [Development notes](#development-notes)
 
@@ -239,6 +240,17 @@ In async templates you can use `await`:
 ```
 
 > Note that included or embedded templates will **not** be async. You have to set the `async` option for each included or embedded template manually if you want them to be async too!
+
+## Compile template modules
+Templates can also be compiled into javascript modules.
+```js
+const code1 = await compile.toModule(src, options);
+const code2 = await compile.fileToModule(filename, options);
+```
++ src, filename and options arguments are the same as in `compile` and `compile.file`
++ returns `<string>` - The compiled module ([CommonJS](http://www.commonjs.org/specs/modules/1.0/)) code
+
+> The compiled modules require the `escape-html` module for html-escaped output. If `subcode` is not in your dependencies you should `npm install escape-html`!
 
 <br/>
 
