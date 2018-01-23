@@ -2,6 +2,7 @@
 
 const path = require('path');
 const test = require('ava');
+const fs = require('fs-extra');
 const {compile} = require('..');
 
 function data(filename) {
@@ -76,4 +77,32 @@ test('extend', async t => {
 test('async templates', async t => {
 	const tm = await compile('<?= await value ?>', {async: true});
 	t.is(await tm({value: Promise.resolve(42)}), '42');
+});
+
+test('to module', async t => {
+	const output = data('dist/to-module.js');
+	const code = await compile.toModule('<?= "Hello World!" ?>');
+	await fs.ensureDir(path.dirname(output));
+	await fs.writeFile(output, code, 'utf8');
+
+	try {
+		const tm = require(output);
+		t.is(tm(), 'Hello World!');
+	} finally {
+		delete require.cache[output];
+	}
+});
+
+test('file to module', async t => {
+	const output = data('dist/file-to-module.js');
+	const code = await compile.fileToModule(data('file-to-module.html'));
+	await fs.ensureDir(path.dirname(output));
+	await fs.writeFile(output, code, 'utf8');
+
+	try {
+		const tm = require(output);
+		t.true(tm().startsWith('Hello World!'));
+	} finally {
+		delete require.cache[output];
+	}
 });
