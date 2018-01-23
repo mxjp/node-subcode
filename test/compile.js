@@ -62,6 +62,17 @@ test('require', async t => {
 	t.is(tm(), 'test value');
 });
 
+test('extend', async t => {
+	const tm = await compile('<?: embedMagic(); ?><?= magic ?>', {
+		extend(context) {
+			context.embedMagic = () => {
+				context.write('const magic = 42;');
+			};
+		}
+	});
+	t.is(tm(), '42');
+});
+
 test('async templates', async t => {
 	const tm = await compile('<?= await value ?>', {async: true});
 	t.is(await tm({value: Promise.resolve(42)}), '42');

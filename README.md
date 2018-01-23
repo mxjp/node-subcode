@@ -13,11 +13,14 @@ A bootstrapped javascript template engine that features compile and runtime cont
 	+ [Compile-time code](#compile-time-code)
 + [Compilation API](#compilation-api)
 	+ [Compile-time context](#compile-time-context)
+	+ [Compile-time extensions](#compile-time-extensions)
 	+ [Caching compiled templates](#caching-compiled-templates)
 	+ [Custom syntax](#custom-syntax)
 	+ [Async templates](#async-templates)
 + [Parser API](#parser-api)
 + [Development notes](#development-notes)
+
+<br/>
 
 
 
@@ -160,6 +163,23 @@ The filename of the current template if the `filename` compile option is set, ot
 
 #### context.dirname
 The directory name of the current template if the `filename` compile option is set, otherwise null.
+
+## Compile-time extensions
+The compile time context can be extended from the compilation api using the `extend` compile option.
+The extend option specifies a function that is called for each compile-time context before a template is compiled. From this you can extend the context itself:
+```js
+const template = await compile('<?: example(); ?><?= magic ?>', {
+	extend(context) {
+		// When calling the example function from compile-time code
+		// it will embed a constant into the template's runtime code:
+		context.example = () => {
+			context.write('const magic = 42;');
+		};
+	}
+});
+
+template(); // -> 42
+```
 
 ## Caching compiled templates
 Caching compiled template code can speed up compilation of templates with includes. To take advantage of caching you have to specify the `cache` compile option.
