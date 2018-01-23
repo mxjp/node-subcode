@@ -1,6 +1,6 @@
 {
 	"name": "subcode",
-	"version": "1.0.1",
+	"version": "1.0.2",
 	"description": "A bootstrapped javascript template engine that features compile and runtime control code, custom syntax, compile-time includes, async templates and much more",
 	"main": "lib",
 	"repository": "github:mpt0/node-subcode",
