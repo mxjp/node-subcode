@@ -3,9 +3,9 @@
 [![npm](https://img.shields.io/npm/v/subcode.svg)]()
 [![npm](https://img.shields.io/npm/l/subcode.svg)]()
 
-## Overview
 A bootstrapped javascript template engine that features compile and runtime control code, custom syntax, compile-time includes, async templates and much more.
 
+## Overview
 + [Installation](#installation)
 + [Syntax](#syntax)
 	+ [Runtime output](#runtime-output)
