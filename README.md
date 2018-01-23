@@ -6,18 +6,18 @@
 ## Overview
 A bootstrapped javascript template engine that features compile and runtime control code, custom syntax, compile-time includes, async templates and much more.
 
-+ Installation
-+ Syntax
-	+ Runtime output
-	+ Runtime control code
-	+ Compile-time code
-+ Compilation API
-	+ Compile-time context
-	+ Caching compiled templates
-	+ Custom syntax
-	+ Async templates
-+ Parser API
-+ Development notes
++ [Installation](#installation)
++ [Syntax](#syntax)
+	+ [Runtime output](#runtime-output)
+	+ [Runtime control code](#runtime-control-code)
+	+ [Compile-time code](#compile-time-code)
++ [Compilation API](#compilation-api)
+	+ [Compile-time context](#compile-time-context)
+	+ [Caching compiled templates](#caching-compiled-templates)
+	+ [Custom syntax](#custom-syntax)
+	+ [Async templates](#async-templates)
++ [Parser API](#parser-api)
++ [Development notes](#development-notes)
 
 
 
@@ -215,7 +215,7 @@ const html = await template(locals);
 
 In async templates you can use `await`:
 ```html
-<?= await getValue(); ?>
+<?= await getValue() ?>
 ```
 
 <br/>
