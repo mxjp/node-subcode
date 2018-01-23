@@ -3,15 +3,21 @@
 [![npm](https://img.shields.io/npm/v/subcode.svg)]()
 [![npm](https://img.shields.io/npm/l/subcode.svg)]()
 
-A bootstrapped javascript template engine that features compile and runtime control code, custom syntax, compile-time includes, async templates and the use of it's internal parser.
+## Overview
+A bootstrapped javascript template engine that features compile and runtime control code, custom syntax, compile-time includes, async templates and much more.
 
-## Status
-Subcode is still under development. Syntax, api and usage may change in the future. Anything that is marked as deprecated may stop working at any time!
-
-#### Recently deprecated API
-+ compile options/context - Deprecated because it does not fit all the needs when extending the compile time context with custom api from outside a template. _Using this option will now print a warning._
-
-<br/>
++ Installation
++ Syntax
+	+ Runtime output
+	+ Runtime control code
+	+ Compile-time code
++ Compilation API
+	+ Compile-time context
+	+ Caching compiled templates
+	+ Custom syntax
+	+ Async templates
++ Parser API
++ Development notes
 
 
 
@@ -20,38 +26,9 @@ Subcode is still under development. Syntax, api and usage may change in the futu
 npm install subcode
 ```
 
-# Quick Start
-_numbers.html_
-```html
-<ul>
-	<? for (const number of numbers) { ?>
-	<li><?= number ?></li>
-	<? } ?>
-</ul>
-```
-
-_index.js_
-```js
-const {compile} = require('subcode');
-
-compile.file('numbers.html').then(numbers => {
-	console.log(numbers({
-		numbers: [1, 7, 42]
-	}));
-});
-```
-**Outputs**
-```html
-<ul>
-	<li>1</li>
-	<li>7</li>
-	<li>42</li>
-</ul>
-```
-
-
-
 <br/>
+
+
 
 # Syntax
 | Syntax | Function |
@@ -60,238 +37,156 @@ compile.file('numbers.html').then(numbers => {
 | `<?- some code ?>` | Output unescaped |
 | `<? some code ?>` | Runtime control code |
 | `<?: some code ?>` | Async code that is executed at compile time. `await` can be used. |
+| `<?# comment ?>` | A comment with no output. |
 | `<??` | Outputs `<?` |
 
-<br/>
+## Runtime Output
+There are two types of output:
 
+| Type | Example |
+|-|-|
+| Html-escaped output | `<?= 'a & b' ?>` outputs `a &amp; b` |
+| Unescaped output | `<?- 'a & b' ?>` outputs `a & b` |
 
+> Never put a semicolon at the end of an output tag. Something like `<?= some.code; ?>` will cause load errors!
 
-## Accessing locals
-If locals are accessed directly, an error is throws if the variable does not exist.
+## Runtime Control Code
+Runtime control code is just normal javascript code that is executed while rendering the template.<br/>
+**A few examples:**
 ```html
-<h1><?= title ?></h1>
+<? if (some.condition) { ?>
+	<h1><?= output.some.heading ?></h1>
+<? } ?>
+
+<ul>
+	<? for (const item of items) { ?>
+		<li><?= item.name ?></li>
+	<? } ?>
+</ul>
 ```
 
-If the `locals` object is used and the variable does not exist no error is thrown and the value will be `undefined`.
-```html
-<h1><?= locals.title ?></h1>
-```
-
-<br/>
-
-
-
-## Compile time includes
-Include another template file at compile time. The following will embed the template as a function with the specified name:
-```html
-<?: await include(name, filename, options) ?>
-```
-+ name `<string>` - The name of the embedded function.
-+ filename `<string>` - The filename of the template to include. The `filename` option is required when using a relative path.
-+ options `<object>` - An optional object with compile options to override. Unspecified options inherit from the current template expect for the `async` option.
-
-#### Using included templates
-Included templates can be rendered at runtime:
-```html
-<?- name(locals) ?>
-```
-+ name `<string>` - The name of the template function.
-+ locals `<object>` - Locals for rendering the included template.
-
-> Note that variables and locals from scope where the template has been embedded are also available from the included template!
-
-#### Example
-_my-template.html_
-```html
-<p>Some <?= some ?></p>
-```
-_Main template_
-```html
-<?: await include ('myTemplate', 'my-template.html') ?>
-<?- myTemplate({some: 'locals'}) ?>
-<?- myTemplate({some: 'trees'}) ?>
-```
-**Outputs**
-```html
-<p>Some locals</p>
-<p>Some trees</p>
-```
+## Compile-time Code
+Compile-time code is used to extend the compiled render function. It is executed while building the render function so that it can embed custom code like included templates, embedded resources or other utility. In compile-time code, `await` can be used.
 
 <br/>
 
 
 
-## Inline templates
-Inline template functions can be defined to reuse them elsewhere.
-```html
-<?: template(name, options, () => { ?>
-	<!-- Template body -->
-<?: }) ?>
+# Compilation API
+```js
+const {compile} = require('subcode');
+
+// Compile a template directly:
+const template1 = await compile(src, options);
+
+// Or compile from file:
+const template2 = await compile.file(filename, options);
+
+// Render a template:
+const html = template(locals);
 ```
-+ name `<string>` - The name of the template function.
-+ options `<object>` - An optional object which may set the `async` compiler option.
-+ body `<function>` - The function which is the template itself.
++ src `<string>` - The template code.
++ filename `<string>` - The template filename.
++ options `<object>` - Optional compilation options:
+	+ syntax `<object>` - A custom syntax definition as described below.
+	+ filename `<string>` - The filename of the template used for the module system and relative includes. This option will be set automatically when using `compile.file`
+	+ encoding `<string>` - The encoding for reading template files. Default is `'utf8'`
+	+ extend `<function>` - A function that is called with the compile time context for each template before running the bootstrapped compiler.
+	+ cache `<object>` - The cache that is used for caching compiled templates.
+	+ async `<boolean>` - True to compile to an async render function so that `await` can be used from runtime template code.
++ returns `<function>` - The template render function with a single argument:
+	+ locals `<object>` - The locals that are available as variables in template runtime code.
+	+ returns `<string>` - A string of rendered html.
 
-#### Using inline templates
-Inline templates are used in the same way as included templates.
+## Compile-time Context
+All properties from the compile-time context are available from compile-time code like global variables.
 
-#### Example
+#### async context.include(name, request[, options])
+Used for including template files.
+```html
+<!-- Include the template: -->
+<?: await include('myTemplate', 'path/to/template.html'); ?>
+
+<!-- Use the template: -->
+<?- myTemplate(locals) ?>
+```
++ name `<string>` - The name of the embedded render function.
++ request `<string>` - The filename to include. Relative paths require the `filename` compile option in the current template.
++ options `<object>` - An object with compile options expect that the `syntax`, `extend`, `encoding` and `cache` options will default to the current template's options.
+
+#### context.template(name, [options, ]body)
+Compile a nested template into an embedded render function.
 ```html
 <?: template('myTemplate', () => { ?>
-	<h1><?= title ?></h1>
+	<!-- The template body is just template code! -->
 	<p><?= text ?></p>
-<?: }) ?>
+<?: }); ?>
 
-<?- myTemplate({title: 'My title!', text: 'Some text...'}) ?>
+<!-- Use the template: -->
+<?- myTemplate({text: 'Hello World'}) ?>
 ```
-**Outputs**
++ name `<string>` - The name of the embedded render function.
++ options `<object>` - An object which may set the `async` compile option.
++ body `<function>` - The body of a template.
+
+#### context.write(code)
+Write javascript code to the render function.
 ```html
-<h1>My title!</h1>
-<p>Some text...</p>
+<!-- Embed some data: -->
+<?: write('const magic = 42;'); ?>
+
+<!-- Use at runtime: -->
+<?= magic ?>
 ```
++ code `<string>` - Some javascript to write. If the passed code should be independent from other parts in the render function, make sure to append a semicolon at the end.
 
-<br/>
-
-
-
-## Emitting control code
-Control code can be emitted from compile time code for embedding custom runtime api or resources.
+#### context.stringEscape(str)
+A function for string-escaping text.
 ```html
-<?: write(code) ?>
+<?: write('const text = "' + stringEscape('Some"text') + '";'); ?>
+<?= text ?>
 ```
-+ code `<string>` - The runtime control code to emit.
++ str `<string>` - Any text to string-escape.
++ returns `<string>` - The escaped text.
 
-#### Escaping string literals
-To escape the content of a string literal use the `stringEscape` function which is also available from the compile time context.
+#### context.require(request)
+The `require` function. The `filename` compile option is required for relative includes.
 ```html
-<?: write('const someString = "' + stringEscape('Some string...') + '"'); ?>
+<?: const module = require('module'); ?>
 ```
 
-#### Example
-```html
-<?: write('const example = 42;') ?>
-<p><?= example ?></p>
-```
-**Outputs**
-```html
-<p>42</p>
-```
+#### context.filename
+The filename of the current template if the `filename` compile option is set, otherwise null.
 
-<br/>
-
-
-
-## Accessing the module system
-```html
-<?:
-	filename // The current filename if the filename option was set.
-	dirname // The current dirname if the filename options was set.
-?>
-<?:
-	require(request);
-	// The require function.
-	// Relative paths are supported if the filename options ise set.
-?>
-```
-#### Example
-```html
-<?: write(`const filename="' + stringEscape(filename) + '";'); ?>
-The filename of this template was "<?= filename ?>".
-```
-
-<br/>
-
-
-
-## Reserved names
-In control and runtime code, names starting with two underscores like `__example` should **NOT** be used.
-
-<br/>
-
-
-
----
-
-# API
-
-## compile
-Compile a template.
-```js
-const {compile} = require('subcode');
-
-const template = await compile(src, options);
-```
-+ src `<string>` - The source to compile.
-+ options `<object>` - An optional object with the following properties:
-	+ async `<boolean>` - True to compile the template to an async function. Default is `false`
-	+ syntax `<object>` - A custom syntax configuration as described below.
-	+ **DEPRECATED:** _context `<object>` - Properties of this object are available from compile time control code. Default is `{}`_
-	+ filename `<string>` - The filename used for relative includes.
-	+ encoding `<string>` - The encoding used for reading files. Default is `'utf8'`
-	+ cache `<object>` - An object for caching compiled templates as described below. Default is none.
-+ returns `<function>` - The compiled template function which takes the `locals` argument:
-	+ locals `<object>` - Properties of this object are available from runtime output and control code. Default is `{}`
-	+ returns `<string>` - The rendered output.
-
-## compile.file
-Compile a template from file.
-```js
-const {compile} = require('subcode');
-
-const template = await compile.file(filename, options);
-```
-+ filename `<string>` - The file to load and compile.
-+ options - The same options object passed to the `compile` function.
-	+ The `filename` option will be set to the current filename automatically.
-
-<br/>
-
-
+#### context.dirname
+The directory name of the current template if the `filename` compile option is set, otherwise null.
 
 ## Caching compiled templates
-The cache object must implement the following api:
-
-| Function | Description |
-|-|-|
-| `set(filename, value)` | Set a cache entry |
-| `get(filename)` | Get a cache entry. Should return `undefined` if no entry exists. |
-
-You can also use a `Map` instance as cache.
-
-<br/>
-
-
-
-## Async templates
-Async templates enable the use of `await` from runtime control code.
+Caching compiled template code can speed up compilation of templates with includes. To take advantage of caching you have to specify the `cache` compile option.
 ```js
-const template = await compile('<?= await value ?>', {async: true});
-
-await template({
-	value: Promise.resolve(42)
-}); // -> 42
+cache: {
+	set(filename, code) {
+	},
+	get(filename) {
+	}
+}
 ```
++ set `<function>` - A function for setting a cache entry.
+	+ filename `<string>` - The filename that is used as the key.
+	+ code `<string>` - The compiled template code.
++ get `<function>` - A function for getting a cache entry.
+	+ filename `<string>` - The filename that was used as the key.
+	+ returns `<string> | undefined` - The compiled template code or undefined if no entry exists with the specified filename.
 
-When including templates or defining inline templates, dont forget to set the `async` option to true, if you want the embedded template function to be async too!
-```html
-<?: include('') ?>
+You can also use a `Map` object for caching templates.
+```js
+cache: new Map()
 ```
-
-#### Using async templates
-When using async templates from runtime code, dont forget to use await:
-```html
-<?- await myAsyncTemplate({some: 'locals'}) ?>
-```
-
-<br/>
-
-
 
 ## Custom syntax
-The `syntax` option can be used to change the actual template syntax.<br/>
-The configuration object for the default syntax would look like this:
+Custom syntax can be defined using the `syntax` compile option. The syntax option for the default syntax would look like this:
 ```js
-{
+syntax: {
 	// Variable length:
 	open: '<?',
 	close: '?>',
@@ -304,60 +199,57 @@ The configuration object for the default syntax would look like this:
 	escape: open[open.length - 1]
 }
 ```
-Every syntax option can be omitted to use the default value.
+Note that a custom syntax configuration is not validated. Syntax configuration is not checked for errors. To ensure that everything is correct, the following guidelines should be followed:
++ All options have a different value.
++ Variable length options have a length of at least 1.
++ Fixed length options have a length of 1.
 
-#### Valid syntax configuration?
-Custom syntax is not validated and invalid configuration may cause strange errors. In order to check that everything is correct, the following points should be taken into account:
-+ No value conflicts with another or any default.
-+ All "fixed length" options have a length of 1.
-+ All "variable length" options have a length of 1 or higher.
+## Async templates
+Asynchronous templates can be compiled by setting the `async` option.
+```js
+const template = await compile('...', {async: true});
+
+// Render an async template:
+const html = await template(locals);
+```
+
+In async templates you can use `await`:
+```html
+<?= await getValue(); ?>
+```
 
 <br/>
 
 
 
-# parse
-Gives access to subcodes internal parser.
+# Parser API
+The parser api gives access to the internal parser of subcode.
 ```js
 const {parse} = require('subcode');
 
 parse(src, output, syntax);
 ```
-+ src `<string>` - The source to parse.
-+ output `<object>` - An object that should implement the following api:
-	+ plain(html) `<function>` - Called for each raw html part.
-	+ compilerControl(code) `<function>` - Called for compiler control code.
-	+ writeEscaped(code) `<function>` - Called for escaped output code.
-	+ writeUnescaped(code) `<function>` - Called for unescaped output code.
-	+ control(code) `<function>` - Called for control code.
-+ syntax `<object>` - An optional syntax configuration.
-
-When parsing a template, the output functions are called synchronously.<br/>
-
-### Example
-The following table shows some example templates with the resulting function calls that are made from the parser:
-
-| Template | Resulting function calls |
-|-|-|
-| `Hello <?= name ?>!` | `plain('Hello '), writeEscaped(' name '), plain('!')` |
-| `<?: some control code ?>` | `control(' some control code ')` |
++ src `<string>` - The template code.
++ output `<object>` - The parser output that has to implement several output functions. The output functions are called while parsing the template:
+	+ `plain(html)` - Called with html code to output.
+	+ `compilerControl(js)` - Called with compile-time code.
+	+ `writeEscaped(js)` - Called with runtime code to output html-escaped.
+	+ `writeUnescaped(js)` - Called with runtime code to output unescaped.
+	+ `control(js)` - Called with runtime control code.
++ syntax `<object>` - An optional syntax configuration as described above.
 
 <br/>
 
 
 
----
+# Development notes
 
-# Development
-
-## Running tests
-The following will run the linter and all tests once:
+#### Running tests
 ```bash
 npm test
 ```
 
-## Running tests during development
-The following will run tests and watch for changes in code:
+#### Running tests while developing
 ```bash
 npm run dev
 ```
