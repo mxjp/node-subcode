@@ -58,11 +58,6 @@ test('dirname', async t => {
 	t.is(tm(), 'a');
 });
 
-test('require', async t => {
-	const tm = await compile('<?: write("const value = \'" + stringEscape(require("./data/test.json")) + "\';"); ?><?- value ?>', {filename: path.join(__dirname, 'test.html')});
-	t.is(tm(), 'test value');
-});
-
 test('extend', async t => {
 	const tm = await compile('<?: embedMagic(); ?><?= magic ?>', {
 		extend(context) {
@@ -105,4 +100,49 @@ test('file to module', async t => {
 	} finally {
 		delete require.cache[output];
 	}
+});
+
+test('Buffer', async t => {
+	await compile('<?: t.true(typeof Buffer === "function") ?>', {
+		extend(context) {
+			context.t = t;
+		}
+	});
+});
+
+test('timing', async t => {
+	// If setImmediate works, it is assumed that other timing functions
+	// also work, because the sandbox does not use it explicitly.
+	await compile('<?: t.true(typeof setImmediate === "function") ?>', {
+		extend(context) {
+			context.t = t;
+		}
+	});
+});
+
+test('console', async t => {
+	console.subcodeTest = 'test';
+	await compile('<?: t.true(console.subcodeTest === "test") ?>', {
+		extend(context) {
+			context.t = t;
+		}
+	});
+});
+
+test('global', async t => {
+	global.subcodeTest = 'test';
+	await compile('<?: t.true(global.subcodeTest === "test"); t.true(subcodeTest === "test") ?>', {
+		extend(context) {
+			context.t = t;
+		}
+	});
+});
+
+test('process', async t => {
+	process.subcodeTest = 'test';
+	await compile('<?: t.true(process.subcodeTest === "test") ?>', {
+		extend(context) {
+			context.t = t;
+		}
+	});
 });

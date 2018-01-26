@@ -21,6 +21,9 @@ A bootstrapped javascript template engine that features compile and runtime cont
 + [Parser API](#parser-api)
 + [Development notes](#development-notes)
 
+> #### Upgrade Guide
+> If you have previously used a version below 2.0 look [here](UPGRADE.md) for instructions on how to upgrade.
+
 <br/>
 
 
@@ -153,17 +156,21 @@ A function for string-escaping text.
 + str `<string>` - Any text to string-escape.
 + returns `<string>` - The escaped text.
 
-#### context.require(request)
-The `require` function. The `filename` compile option is required for relative includes.
-```html
-<?: const module = require('module'); ?>
-```
-
 #### context.filename
 The filename of the current template if the `filename` compile option is set, otherwise null.
 
 #### context.dirname
 The directory name of the current template if the `filename` compile option is set, otherwise null.
+
+#### node globals
+Some node globals are also available:
++ Buffer
++ setImmediate, clearImmediate
++ setInterval, clearInterval
++ setTimeout, clearTimeout
++ console
++ global
++ process
 
 ## Compile-time extensions
 The compile time context can be extended from the compilation api using the `extend` compile option.
