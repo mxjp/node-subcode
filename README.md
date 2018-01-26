@@ -99,7 +99,7 @@ const html = template(locals);
 	+ filename `<string>` - The filename of the template used for the module system and relative includes. This option will be set automatically when using `compile.file`
 	+ encoding `<string>` - The encoding for reading template files. Default is `'utf8'`
 	+ extend `<function>` - A function that is called with the compile time context for each template before running the bootstrapped compiler.
-	+ cache `<object>` - The cache that is used for caching compiled templates.
+	+ cache `<Map>` - The cache that is used for caching compiled templates.
 	+ async `<boolean>` - True to compile to an async render function so that `await` can be used from runtime template code.
 + returns `<function>` - The template render function with a single argument:
 	+ locals `<object>` - The locals that are available as variables in template runtime code.
@@ -192,24 +192,11 @@ template(); // -> 42
 ## Caching compiled templates
 Caching compiled template code can speed up compilation of templates with includes. To take advantage of caching you have to specify the `cache` compile option.
 ```js
-cache: {
-	set(filename, code) {
-	},
-	get(filename) {
-	}
-}
-```
-+ set `<function>` - A function for setting a cache entry.
-	+ filename `<string>` - The filename that is used as the key.
-	+ code `<string>` - The compiled template code.
-+ get `<function>` - A function for getting a cache entry.
-	+ filename `<string>` - The filename that was used as the key.
-	+ returns `<string> | undefined` - The compiled template code or undefined if no entry exists with the specified filename.
+const cache = new Map()
 
-You can also use a `Map` object for caching templates.
-```js
-cache: new Map()
+const template = await compile('...', {cache})
 ```
+Note that the same cache map can be used for multiple compilations that use the same compile options.
 
 ## Custom syntax
 Custom syntax can be defined using the `syntax` compile option. The syntax option for the default syntax would look like this:

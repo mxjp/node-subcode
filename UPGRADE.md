@@ -25,3 +25,6 @@ extend(context) {
 
 ## new compile-time globals
 Subcode is now using it's own sandbox for compiling and loading templates instead of the `vm` module. Additionally there are some [node globals](README.md#node-globals) available.
+
+## caching compiled templates
+Now the `cache` compile option should specify a spec compliant `Map` instance. In addition, keys and values are now filled with internal data.
