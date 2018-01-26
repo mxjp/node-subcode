@@ -163,7 +163,7 @@ The filename of the current template if the `filename` compile option is set, ot
 The directory name of the current template if the `filename` compile option is set, otherwise null.
 
 #### node globals
-Some node globals are also available:
+Some node globals are also available from compile-time code, but they are not part of the context object.
 + Buffer
 + setImmediate, clearImmediate
 + setInterval, clearInterval
