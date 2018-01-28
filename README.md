@@ -242,9 +242,21 @@ const code1 = await compile.toModule(src, options);
 const code2 = await compile.fileToModule(filename, options);
 ```
 + src, filename and options arguments are the same as in `compile` and `compile.file`
-+ returns `<string>` - The compiled module ([CommonJS](http://www.commonjs.org/specs/modules/1.0/)) code
++ returns `<string>` - The compiled module code.
 
 > The compiled modules require the `escape-html` module for html-escaped output. If `subcode` is not in your dependencies you should `npm install escape-html`!
+
+#### Module types
+The module type can be set using the `moduleType` compile option:
+
+| moduleType | Output |
+|-|-|
+| `'common'` | Outputs a [CommonJS](http://www.commonjs.org/specs/modules/1.0/) module. |
+| `'es15'` | Outputs a module using [es2015 import](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/import) statements. |
+
+```js
+const code = await compile.toModule(src, {moduleType: 'es15'});
+```
 
 <br/>
 
