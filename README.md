@@ -112,6 +112,7 @@ All properties from the compile-time context are available from compile-time cod
 Used for including template files.
 ```html
 <!-- Include the template: -->
+<?: await include(name, request); ?>
 <?: await include('myTemplate', 'path/to/template.html'); ?>
 
 <!-- Use the template: -->
@@ -120,6 +121,22 @@ Used for including template files.
 + name `<string>` - The name of the embedded render function.
 + request `<string>` - The filename to include. Relative paths require the `filename` compile option in the current template.
 + options `<object>` - An object with compile options expect that the `syntax`, `extend`, `encoding` and `cache` options will default to the current template's options.
+
+#### async context.includeAll(map)
+Used for including multiple template files.
+```html
+<?: await includeAll(map); ?>
+<?: await includeAll({
+	template1: 'path/to/template1.html',
+	template2: ['path/to/template2.html', {some: 'compile-options'}]
+}); ?>
+
+<?- template1(locals) ?>
+<?- template2(locals) ?>
+```
++ map `<object>` - An object with templates to include.
+	+ key `<string>` - Map keys are used as template names.
+	+ value `<string> | <array>` - The template path or an array of the template path with compile options.
 
 #### context.template(name, [options, ]body)
 Compile a nested template into an embedded render function.

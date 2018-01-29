@@ -26,6 +26,13 @@ test('includes', async t => {
 	t.true(tm().startsWith('<p>Included</p>'));
 });
 
+test('multi include', async t => {
+	const tm = await compile('<?: await includeAll({s1: "simple.html", s2: "simple.html"}) ?><?- s1({text: "1"}) + s2({text: "2"}) ?>', {
+		filename: data('test.html')
+	});
+	t.is(tm(), '<p>1</p>\n<p>2</p>\n');
+});
+
 test('includes, use parent locals', async t => {
 	const tm = await compile('<?: await include("simple", "simple.html") ?><?- simple() ?>', {
 		filename: data('test.html')
