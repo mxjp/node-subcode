@@ -33,7 +33,8 @@
 	},
 	"dependencies": {
 		"escape-html": "^1.0.3",
-		"js-string-escape": "^1.0.1"
+		"js-string-escape": "^1.0.1",
+		"stringify-object": "^3.2.2"
 	},
 	"xo": {
 		"rules": {

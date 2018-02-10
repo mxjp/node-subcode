@@ -153,6 +153,18 @@ Compile a nested template into an embedded render function.
 + options `<object>` - An object which may set the `async` compile option.
 + body `<function>` - The body of a template.
 
+#### context.embedObject(name, data)
+Embed data into the templates runtime.
+```html
+<!-- Embed data into the template runtime: -->
+<?: embedObject('example', {foo: 'bar'}) ?>
+
+<!-- Use it at runtime: -->
+Foo: <?= example.bar ?>
+```
++ name `<string>` - The name of the embedded object.
++ data `<any>` - The object to embed. The object will be stringified using [`stringify-object`](https://www.npmjs.com/package/stringify-object).
+
 #### context.write(code)
 Write javascript code to the render function.
 ```html
@@ -200,6 +212,10 @@ const template = await compile('<?: example(); ?><?= magic ?>', {
 		context.example = () => {
 			context.write('const magic = 42;');
 		};
+
+		// You can also call compile time api from here which behaves
+		// like it has been called from the beginning of the template.
+		context.embedObject('someEmbeddedData', {foo: 'bar'});
 	}
 });
 

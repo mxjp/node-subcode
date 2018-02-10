@@ -153,3 +153,17 @@ test('process', async t => {
 		}
 	});
 });
+
+test('embed object', async t => {
+	const tm = await compile('<?: embedObject("test", {foo: "bar"}) ?><?= test.foo ?>');
+	t.is(tm(), 'bar');
+});
+
+test('embed object from external code', async t => {
+	const tm = await compile('a, <?= test.foo ?>, b', {
+		extend(context) {
+			context.embedObject('test', {foo: 'bar'});
+		}
+	});
+	t.is(tm(), 'a, bar, b');
+});
