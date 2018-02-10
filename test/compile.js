@@ -167,3 +167,8 @@ test('embed object from external code', async t => {
 	});
 	t.is(tm(), 'a, bar, b');
 });
+
+test('output from compile time code', async t => {
+	const tm = await compile('a, <?: output("b") ?>, c');
+	t.is(tm(), 'a, b, c');
+});

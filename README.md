@@ -153,6 +153,17 @@ Compile a nested template into an embedded render function.
 + options `<object>` - An object which may set the `async` compile option.
 + body `<function>` - The body of a template.
 
+#### context.output(html)
+Output runtime code to render raw html at runtime.
+```html
+runtime, <?: output('compile-time'); ?>
+```
+Would render to
+```html
+runtime, compile-time
+```
++ html `<string>` - A string of raw html that is embedded into the template.
+
 #### context.embedObject(name, data)
 Embed data into the templates runtime.
 ```html
