@@ -21,8 +21,8 @@ A bootstrapped javascript template engine that features compile and runtime cont
 + [Parser API](#parser-api)
 + [Development notes](#development-notes)
 
-> #### Upgrade Guide
-> If you have previously used a version below 2.0 look [here](UPGRADE.md) for instructions on how to upgrade.
+## Upgrade Guide
+If you have previously used a version below 3.0.0 look [here](https://github.com/mpt0/node-subcode/blob/master/UPGRADE.md) for instructions on how to upgrade.
 
 <br/>
 
@@ -66,7 +66,7 @@ Runtime control code is just normal javascript code that is executed while rende
 <? } ?>
 
 <ul>
-	<? for (const item of items) { ?>
+	<? for (const item of locals.items) { ?>
 		<li><?= item.name ?></li>
 	<? } ?>
 </ul>
@@ -102,7 +102,7 @@ const html = template(locals);
 	+ cache `<Map>` - The cache that is used for caching compiled templates.
 	+ async `<boolean>` - True to compile to an async render function so that `await` can be used from runtime template code.
 + returns `<function>` - The template render function with a single argument:
-	+ locals `<object>` - The locals that are available as variables in template runtime code.
+	+ locals `<object>` - The locals object that is accessible from inside the template using `locals.`
 	+ returns `<string>` - A string of rendered html.
 
 ## Compile-time Context
@@ -143,7 +143,7 @@ Compile a nested template into an embedded render function.
 ```html
 <?: template('myTemplate', () => { ?>
 	<!-- The template body is just template code! -->
-	<p><?= text ?></p>
+	<p><?= locals.text ?></p>
 <?: }); ?>
 
 <!-- Use the template: -->
@@ -171,7 +171,7 @@ Embed data into the templates runtime.
 <?: embedObject('example', {foo: 'bar'}) ?>
 
 <!-- Use it at runtime: -->
-Foo: <?= example.bar ?>
+Foo: <?= example.foo ?>
 ```
 + name `<string>` - The name of the embedded object.
 + data `<any>` - The object to embed. The object will be stringified using [`stringify-object`](https://www.npmjs.com/package/stringify-object).
@@ -274,7 +274,7 @@ const html = await template(locals);
 
 In async templates you can use `await`:
 ```html
-<?= await getValue() ?>
+<?= await locals.doSomething() ?>
 ```
 
 > Note that included or embedded templates will **not** be async. You have to set the `async` option for each included or embedded template manually if you want them to be async too!
@@ -290,7 +290,7 @@ const code2 = await compile.fileToCode(filename, options);
 
 Compiled functions consist of a minified arrow function (that may be async depending on your options) that could look like the following:
 ```js
-(locals={})=>{with(locals){let __r='';__r+='Hello '+__e( name )+'!';return __r;}}
+(locals={})=>{let __r='';__r+='Hello '+__e( name )+'!';return __r;}
 ```
 + `__r` - Variable used to assemble the template output.
 + `__e` - Function used to html-escape output data. When using compiled function code, you may want to provide this function from outer scope.

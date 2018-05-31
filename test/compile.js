@@ -12,12 +12,12 @@ function data(filename) {
 }
 
 test('simple', async t => {
-	const tm = await compile('Hello <?= name ?>!');
+	const tm = await compile('Hello <?= locals.name ?>!');
 	t.is(tm({name: 'World'}), 'Hello World!');
 });
 
 test('simple code', async t => {
-	const tc = await compile.code('Hello <?= name ?>!');
+	const tc = await compile.code('Hello <?= locals.name ?>!');
 	const fn = vm.runInContext(tc, vm.createContext({__e: htmlEscape}));
 	t.is(fn({name: 'World'}), 'Hello World!');
 });
@@ -41,15 +41,8 @@ test('multi include', async t => {
 	t.is(tm(), '<p>1</p>\n<p>2</p>\n');
 });
 
-test('includes, use parent locals', async t => {
-	const tm = await compile('<?: await include("simple", "simple.html") ?><?- simple() ?>', {
-		filename: data('test.html')
-	});
-	t.true(tm({text: 'Parent'}).startsWith('<p>Parent</p>'));
-});
-
 test('inline', async t => {
-	const tm = await compile('<?: template("inline", () => { ?><?= value ?><?: }) ?><?- inline() ?>, <?- inline({value: value * 2}) ?>');
+	const tm = await compile('<?: template("inline", () => { ?><?= locals.value ?><?: }) ?><?- inline({value: locals.value}) ?>, <?- inline({value: locals.value * 2}) ?>');
 	t.is(tm({value: 7}), '7, 14');
 });
 
@@ -85,7 +78,7 @@ test('extend', async t => {
 });
 
 test('async templates', async t => {
-	const tm = await compile('<?= await value ?>', {async: true});
+	const tm = await compile('<?= await locals.value ?>', {async: true});
 	t.is(await tm({value: Promise.resolve(42)}), '42');
 });
 

@@ -1,5 +1,14 @@
 # Upgrade Guide
 
+# to subcode 3.0
+
+## accessing locals
+Accessing locals without the `locals.` prefix has been removed completely.
+
+
+
+<br/>
+
 # to subcode 2.0
 
 ## compile-time/require
@@ -15,7 +24,7 @@ You can also provide your own require implementation:
 ```js
 extend(context) {
 	context.require = request => {
-		if (/^(\.|\.\.)(\/.+|$)/.test(request)) {
+		if (/^(\.|\.\.)([//\/]|$)/.test(request)) {
 			request = path.join(context.dirname, request);
 		}
 		return require(request);
