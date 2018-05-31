@@ -279,6 +279,22 @@ In async templates you can use `await`:
 
 > Note that included or embedded templates will **not** be async. You have to set the `async` option for each included or embedded template manually if you want them to be async too!
 
+## Compile raw function code
+Sometimes, you need access to the raw compiled template function code.
+```js
+const code1 = await compile.code(src, options);
+const code2 = await compile.fileToCode(filename, options);
+```
++ src, filename and options arguments are the same as in `compile` and `compile.file`
++ returns `<string>` - The compiled template function code.
+
+Compiled functions consist of a minified arrow function (that may be async depending on your options) that could look like the following:
+```js
+(locals={})=>{with(locals){let __r='';__r+='Hello '+__e( name )+'!';return __r;}}
+```
++ `__r` - Variable used to assemble the template output.
++ `__e` - Function used to html-escape output data. When using compiled function code, you may want to provide this function from outer scope.
+
 ## Compile template modules
 Templates can also be compiled into javascript modules.
 ```js
