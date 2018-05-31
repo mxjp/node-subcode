@@ -1,8 +1,10 @@
 'use strict';
 
+const vm = require('vm');
 const path = require('path');
 const test = require('ava');
 const fs = require('fs-extra');
+const htmlEscape = require('escape-html');
 const {compile} = require('..');
 
 function data(filename) {
@@ -12,6 +14,12 @@ function data(filename) {
 test('simple', async t => {
 	const tm = await compile('Hello <?= name ?>!');
 	t.is(tm({name: 'World'}), 'Hello World!');
+});
+
+test('simple code', async t => {
+	const tc = await compile.code('Hello <?= name ?>!');
+	const fn = vm.runInContext(tc, vm.createContext({__e: htmlEscape}));
+	t.is(fn({name: 'World'}), 'Hello World!');
 });
 
 test('simple file', async t => {
